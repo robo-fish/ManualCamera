@@ -1,0 +1,31 @@
+/***************************************************************************
+*
+* This file is part of the ManualCamera project.
+* Copyright (C) 2015, 2018 Kai Oezer
+* https://github.com/robo-fish/ManualCamera
+*
+* ManualCamera is free software. You can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*
+****************************************************************************/
+"Help_Histo" = "ヒストグラム";
+"Help_Level" = "グリッド";
+"Help_ExpOffset" = "最適な露出によるオフセット";
+"Help_Focus" = "焦点距離";
+"Help_ISO" = "ISO感度ダイヤル";
+"Help_Speed" = "シャッター速度ダイヤル";
+"Help_Shutter" = "シャッター";
+"Help_Disable" = "あなたはこのヘルプボタンを設定で隠すことができます。";
+"Help_Button_Symbol" = "?";
+"CameraPermission" = "このアプリはカメラにアクセスする権限がありません。\n設定で権限を与えることができます。";
+"PhotoLibraryPermission" = "このアプリは写真へアクセスする権限がありません。\n設定で権限を与えることができます。";
