@@ -19,13 +19,13 @@
 *
 ****************************************************************************/
 "Help_Histo" = "Histogram";
-"Help_Level" = "Hilfslinien";
-"Help_ExpOffset" = "Abweichung von optimaler Belichtung";
-"Help_Focus" = "Schärfepunkt";
-"Help_ISO" = "ISO-Drehknopf";
-"Help_Speed" = "Belichtungszeit";
-"Help_Shutter" = "Auslöser";
-"Help_Disable" = "Dieser Hilfe-Knopf kann in Einstellungen ausgeblendet werden.";
+"Help_Level" = "Stödlinjer & Lutningsmätare";
+"Help_ExpOffset" = "Avvikelse från optimalt belysning";
+"Help_Focus" = "Skärpeinställning";
+"Help_ISO" = "ISO-ratt";
+"Help_Speed" = "Slutartidratt";
+"Help_Shutter" = "Avtryckare";
+"Help_Disable" = "Dölj denna hjälpknappen på Inställningar.";
 "Help_Button_Symbol" = "?";
-"CameraPermission" = "Diese App hat keine Zugriffserlaubnis für die Kamera.\nSie können die Erlaubnis in Einstellungen erteilen.";
-"PhotoLibraryPermission" = "Diese App hat keine Zugriffserlaubnis für Ihre Fotos.\nSie können die Erlaubnis in Einstellungen erteilen.";
+"CameraPermission" = "Denna app har ingen tillstånd att nytta kameran.\nDu kan ge tillstånd i Inställningar.";
+"PhotoLibraryPermission" = "Denna app har ingen tillstånd att skriva till bildbiblioteket.\nDu kan ge tillstånd i Inställningar.";

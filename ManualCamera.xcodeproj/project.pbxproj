@@ -36,6 +36,7 @@
 		2A65FE6D204CBC6000E107AF /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Resources/Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2A65FE70204CBC8700E107AF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Resources/Base.lproj/LaunchScreen.xib; sourceTree = SOURCE_ROOT; };
 		2A65FE72204CBC8700E107AF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Resources/Base.lproj/Main.storyboard; sourceTree = SOURCE_ROOT; };
+		2AC31A4D204FC6DE001379CE /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2AE5A3CA2027A9040080DEA0 /* MCCameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCameraController.swift; sourceTree = "<group>"; };
 		C04BA4181A9EF44800297540 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = ../Resources/Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C04BA41A1A9EF61100297540 /* MCUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MCUtilities.swift; sourceTree = "<group>"; };
@@ -178,6 +179,7 @@
 				ja,
 				tr,
 				de,
+				sv,
 			);
 			mainGroup = C06C3AF21A7ACBF4007370D1;
 			productRefGroup = C06C3AFC1A7ACBF5007370D1 /* Products */;
@@ -281,6 +283,7 @@
 				C0C7DD021AAC8CC800BE1EDF /* ja */,
 				C0C7DD031AAC8F2000BE1EDF /* tr */,
 				C0C7DD041AACA73D00BE1EDF /* de */,
+				2AC31A4D204FC6DE001379CE /* sv */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";

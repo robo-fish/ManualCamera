@@ -130,7 +130,7 @@ class MCMainController : UIViewController
 
   override var supportedInterfaceOrientations : UIInterfaceOrientationMask
   {
-    return [.landscapeRight]
+    return _layoutStyle == .left ? [.landscapeLeft] : [.landscapeRight]
   }
 
   override func viewWillDisappear(_ animated : Bool)
