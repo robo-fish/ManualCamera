@@ -26,6 +26,5 @@
 "Help_Speed" = "Enstantane ayar düğmesi";
 "Help_Shutter" = "Deklanşör";
 "Help_Disable" = "Bu yardım düğmesini Ayarlar altında kaldırabilirsiniz.";
-"Help_Button_Symbol" = "?";
 "CameraPermission" = "Bu programın kamerayı kullanma izni yok.\nİzin vermek için Ayarlar'ı açınız.";
 "PhotoLibraryPermission" = "Bu programın fotoğraflarınıza erişme izni yok.\nİzin vermek için Ayarlar'ı açınız.";

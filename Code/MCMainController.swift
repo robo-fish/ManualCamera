@@ -54,30 +54,30 @@ class MCMainController : UIViewController
 {
   private let _cameraController = MCCameraController()
 
-  private let _previewView = MCVideoPreviewView(frame: CGRect.zero)
-  private let _isoDial = MCDialControl(frame: CGRect.zero)
-  private let _speedDial = MCDialControl(frame: CGRect.zero)
-  private let _shutterButton = MCRoundColorButton(frame: CGRect.zero)
-  private let _focusSlider = MCSliderControl(frame: CGRect.zero)
-  private let _exposureOffsetView = MCExposureOffsetIndicatorView(frame: CGRect.zero)
-  private let _isoIndicator = UILabel(frame: CGRect.zero)
-  private let _isoLabel = UILabel(frame: CGRect.zero)
-  private let _shutterSpeedIndicator = UILabel(frame: CGRect.zero)
-  private let _shutterLabel = UILabel(frame: CGRect.zero)
+  private let _previewView = MCVideoPreviewView(frame: .zero)
+  private let _isoDial = MCDialControl(frame: .zero)
+  private let _speedDial = MCDialControl(frame: .zero)
+  private let _shutterButton = MCRoundColorButton(frame: .zero)
+  private let _focusSlider = MCSliderControl(frame: .zero)
+  private let _exposureOffsetView = MCExposureOffsetIndicatorView(frame: .zero)
+  private let _isoIndicator = UILabel(frame: .zero)
+  private let _isoLabel = UILabel(frame: .zero)
+  private let _shutterSpeedIndicator = UILabel(frame: .zero)
+  private let _shutterLabel = UILabel(frame: .zero)
 
   private var _histogram : MCHistogram?
   private var _lastHistogramSampleTime : TimeInterval = -1.0
   private var _histogramView : MCHistogramView?
-  private let _histogramButton = UIButton(frame: CGRect.zero)
-  private let _gridButton = UIButton(frame: CGRect.zero)
-  private let _helpButton = MCRoundColorButton(frame: CGRect.zero)
+  private let _histogramButton = UIButton(frame: .zero)
+  private let _gridButton = UIButton(frame: .zero)
+  private let _helpButton = MCRoundColorButton(frame: .zero)
 
   private var _focusAssistant : MCFocusAssistant?
 
   private let _levelIndicator = MCLevelIndicator()
-  private let _levelIndicatorView = UIView(frame: CGRect.zero)
+  private let _levelIndicatorView = UIView(frame: .zero)
 
-  private let _gridView = MCGridView(frame:CGRect.zero)
+  private let _gridView = MCGridView(frame: .zero)
   private var _gridViewWidth : NSLayoutConstraint?
   private var _gridViewHeight : NSLayoutConstraint?
 
@@ -139,29 +139,9 @@ class MCMainController : UIViewController
     NotificationCenter.default.removeObserver(self)
   }
 
-  override func viewDidLayoutSubviews()
-  {
-  /*
-    let sublayers = _helpButton.layer.sublayers
-    if (sublayers == nil) || (sublayers!.count == 0)
-    {
-      let textLayer = CATextLayer()
-      let fontSize : CGFloat = 24.0
-      let textAttributes : [NSAttributedStringKey : Any] = [
-        NSAttributedStringKey.font : UIFont.boldSystemFont(ofSize: fontSize),
-        NSAttributedStringKey.foregroundColor : _helpButton.pressedColor
-      ]
-      let attributedString = NSAttributedString(string: MCLoc("Help_Button_Symbol"), attributes:textAttributes)
-      textLayer.string = attributedString
-      textLayer.alignmentMode = kCAAlignmentRight
-      let textSize = attributedString.size()
-      textLayer.bounds = CGRect(x: 0, y: 0, width: ceil(textSize.width), height: ceil(textSize.height));
-      _helpButton.layer.addSublayer(textLayer)
-      let helpButtonSize = _helpButton.bounds.size
-      textLayer.position = CGPoint(x: helpButtonSize.width/2.0 - textSize.width/2.0, y: helpButtonSize.height/2.0 - textSize.height/2.0)
-    }
-  */
-  }
+//  override func viewDidLayoutSubviews()
+//  {
+//  }
 
 //  override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator)
 //  {

@@ -26,6 +26,5 @@
 "Help_Speed" = "Shutter speed dial";
 "Help_Shutter" = "Shutter";
 "Help_Disable" = "Hide this help button in Settings.";
-"Help_Button_Symbol" = "?";
 "CameraPermission" = "This app has no permission to access the camera.\nYou can give permission in Settings.";
 "PhotoLibraryPermission" = "This app has no permission to access your photo library.\nYou can give permission in Settings.";

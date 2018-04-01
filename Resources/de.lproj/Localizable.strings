@@ -26,6 +26,5 @@
 "Help_Speed" = "Belichtungszeit";
 "Help_Shutter" = "Auslöser";
 "Help_Disable" = "Dieser Hilfe-Knopf kann in Einstellungen ausgeblendet werden.";
-"Help_Button_Symbol" = "?";
 "CameraPermission" = "Diese App hat keine Zugriffserlaubnis für die Kamera.\nSie können die Erlaubnis in Einstellungen erteilen.";
 "PhotoLibraryPermission" = "Diese App hat keine Zugriffserlaubnis für Ihre Fotos.\nSie können die Erlaubnis in Einstellungen erteilen.";

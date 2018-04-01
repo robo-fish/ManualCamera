@@ -26,6 +26,5 @@
 "Help_Speed" = "シャッター速度ダイヤル";
 "Help_Shutter" = "シャッター";
 "Help_Disable" = "あなたはこのヘルプボタンを設定で隠すことができます。";
-"Help_Button_Symbol" = "?";
 "CameraPermission" = "このアプリはカメラにアクセスする権限がありません。\n設定で権限を与えることができます。";
 "PhotoLibraryPermission" = "このアプリは写真へアクセスする権限がありません。\n設定で権限を与えることができます。";

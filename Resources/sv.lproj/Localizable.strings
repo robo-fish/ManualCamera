@@ -25,7 +25,6 @@
 "Help_ISO" = "ISO-ratt";
 "Help_Speed" = "Slutartidratt";
 "Help_Shutter" = "Avtryckare";
-"Help_Disable" = "Dölj denna hjälpknappen på Inställningar.";
-"Help_Button_Symbol" = "?";
+"Help_Disable" = "Dölj denna hjälpknappen i Inställningar.";
 "CameraPermission" = "Denna app har ingen tillstånd att nytta kameran.\nDu kan ge tillstånd i Inställningar.";
 "PhotoLibraryPermission" = "Denna app har ingen tillstånd att skriva till bildbiblioteket.\nDu kan ge tillstånd i Inställningar.";
