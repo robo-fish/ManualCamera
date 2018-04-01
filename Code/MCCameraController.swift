@@ -70,7 +70,9 @@ class MCCameraController : NSObject
     cameraVideoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String:kCVPixelFormatType_32BGRA]
     cameraVideoOutput.setSampleBufferDelegate(self, queue:DispatchQueue(label:"camera sample buffer"));
     _cameraVideoOutput = cameraVideoOutput
-    _cameraPhotoOutput = AVCapturePhotoOutput()
+    let cameraPhotoOutput = AVCapturePhotoOutput()
+    cameraPhotoOutput.isHighResolutionCaptureEnabled = true
+    _cameraPhotoOutput = cameraPhotoOutput
 
     do { _cameraInput = try AVCaptureDeviceInput(device:device) }
     catch { print("Error while initializing the camera. \(error.localizedDescription)") }
@@ -200,7 +202,18 @@ class MCCameraController : NSObject
   {
     guard !_testMode else { return }
     _imageCaptureHandler = handler
-    _cameraPhotoOutput?.capturePhoto(with: AVCapturePhotoSettings(format:[AVVideoCodecKey:AVVideoCodecType.jpeg]), delegate: self)
+    let settings = AVCapturePhotoSettings(format:[AVVideoCodecKey:AVVideoCodecType.jpeg])
+    settings.flashMode = .off
+    settings.isAutoStillImageStabilizationEnabled = true
+    settings.isHighResolutionPhotoEnabled = true
+    settings.isDualCameraDualPhotoDeliveryEnabled = false
+    settings.isAutoDualCameraFusionEnabled = false
+    settings.isCameraCalibrationDataDeliveryEnabled = false
+    settings.isDepthDataDeliveryEnabled = false
+    settings.embedsDepthDataInPhoto = false
+    settings.isDepthDataFiltered = true
+    settings.metadata = [:];
+    _cameraPhotoOutput?.capturePhoto(with: settings, delegate: self)
   }
 
   func requestFocusChange(newValue : Float)

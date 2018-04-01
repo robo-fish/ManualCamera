@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2A4848D42067FA400010CA28 /* MCImagePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4848D32067FA400010CA28 /* MCImagePreviewView.swift */; };
+		2A4848D6206835A80010CA28 /* MCPhotoLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4848D5206835A80010CA28 /* MCPhotoLibrary.swift */; };
 		2A65FE6A204CBC2D00E107AF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C04BA4171A9EF44800297540 /* Localizable.strings */; };
 		2A65FE6E204CBC6000E107AF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2A65FE6C204CBC6000E107AF /* InfoPlist.strings */; };
 		2A65FE73204CBC8700E107AF /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2A65FE6F204CBC8700E107AF /* LaunchScreen.xib */; };
@@ -33,6 +35,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2A4848D32067FA400010CA28 /* MCImagePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCImagePreviewView.swift; sourceTree = "<group>"; };
+		2A4848D5206835A80010CA28 /* MCPhotoLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCPhotoLibrary.swift; sourceTree = "<group>"; };
 		2A65FE6D204CBC6000E107AF /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Resources/Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2A65FE70204CBC8700E107AF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Resources/Base.lproj/LaunchScreen.xib; sourceTree = SOURCE_ROOT; };
 		2A65FE72204CBC8700E107AF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Resources/Base.lproj/Main.storyboard; sourceTree = SOURCE_ROOT; };
@@ -75,6 +79,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2A4848D12067F9080010CA28 /* Camera Controls & Indicators */ = {
+			isa = PBXGroup;
+			children = (
+				C0A604551A7D183800A9AE78 /* histogram.metal */,
+				C0E86D851A89B9B200E8F233 /* dial_gradient.metal */,
+				C0A6044F1A7C271100A9AE78 /* MCDialControl.swift */,
+				C0776B3B1A867A7C00D2E7A2 /* MCExposureOffsetIndicatorView.swift */,
+				C06039571A9FD93E0086C06E /* MCGridView.swift */,
+				C0A604511A7CA97A00A9AE78 /* MCHistogram.swift */,
+				C0C26D0C1A86CFDB000D09AB /* MCLevelIndicator.swift */,
+				C076F7591A841AA3001A643C /* MCSliderControl.swift */,
+			);
+			name = "Camera Controls & Indicators";
+			sourceTree = "<group>";
+		};
+		2A4848D22067F9BF0010CA28 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C06C3B2B1A7B4625007370D1 /* MCVideoPreviewView.swift */,
+				2A4848D32067FA400010CA28 /* MCImagePreviewView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		C06C3AF21A7ACBF4007370D1 = {
 			isa = PBXGroup;
 			children = (
@@ -97,23 +125,17 @@
 		C06C3AFD1A7ACBF5007370D1 /* Code */ = {
 			isa = PBXGroup;
 			children = (
-				C0A604551A7D183800A9AE78 /* histogram.metal */,
-				C0E86D851A89B9B200E8F233 /* dial_gradient.metal */,
+				2A4848D22067F9BF0010CA28 /* Views */,
+				2A4848D12067F9080010CA28 /* Camera Controls & Indicators */,
 				C06C3B001A7ACBF5007370D1 /* MCAppDelegate.swift */,
 				2AE5A3CA2027A9040080DEA0 /* MCCameraController.swift */,
 				C076F75E1A84C59D001A643C /* MCColors.swift */,
-				C0A6044F1A7C271100A9AE78 /* MCDialControl.swift */,
-				C0776B3B1A867A7C00D2E7A2 /* MCExposureOffsetIndicatorView.swift */,
 				C0BB588E1B67771300D6279F /* MCFocusAssistant.swift */,
-				C06039571A9FD93E0086C06E /* MCGridView.swift */,
 				C063C18F1A99EEAC009564F0 /* MCHelpOverlayManager.swift */,
-				C0A604511A7CA97A00A9AE78 /* MCHistogram.swift */,
-				C0C26D0C1A86CFDB000D09AB /* MCLevelIndicator.swift */,
 				C074BF5A1B395EF200D99E8C /* MCMainController.swift */,
 				C06C3B2D1A7B4BF6007370D1 /* MCRoundColorButton.swift */,
-				C076F7591A841AA3001A643C /* MCSliderControl.swift */,
 				C04BA41A1A9EF61100297540 /* MCUtilities.swift */,
-				C06C3B2B1A7B4625007370D1 /* MCVideoPreviewView.swift */,
+				2A4848D5206835A80010CA28 /* MCPhotoLibrary.swift */,
 			);
 			path = Code;
 			sourceTree = "<group>";
@@ -238,7 +260,9 @@
 				C0C26D0D1A86CFDB000D09AB /* MCLevelIndicator.swift in Sources */,
 				2AE5A3CB2027A9040080DEA0 /* MCCameraController.swift in Sources */,
 				C063C1901A99EEAC009564F0 /* MCHelpOverlayManager.swift in Sources */,
+				2A4848D42067FA400010CA28 /* MCImagePreviewView.swift in Sources */,
 				C0E86D861A89B9B200E8F233 /* dial_gradient.metal in Sources */,
+				2A4848D6206835A80010CA28 /* MCPhotoLibrary.swift in Sources */,
 				C0A604521A7CA97A00A9AE78 /* MCHistogram.swift in Sources */,
 				C074BF5B1B395EF200D99E8C /* MCMainController.swift in Sources */,
 				C04BA41B1A9EF61100297540 /* MCUtilities.swift in Sources */,

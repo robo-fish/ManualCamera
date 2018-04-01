@@ -81,6 +81,10 @@ class MCMainController : UIViewController
   private var _gridViewWidth : NSLayoutConstraint?
   private var _gridViewHeight : NSLayoutConstraint?
 
+  private var _imagePreviewView = MCImagePreviewView(frame: .zero)
+  private var _imagePreviewViewInsetLeftHanded : NSLayoutConstraint?
+  private var _imagePreviewViewInsetRightHanded : NSLayoutConstraint?
+
   private var _messageLabel : UILabel?
 
   private var _helpOverlayManager : MCHelpOverlayManager?
@@ -289,7 +293,9 @@ private extension MCMainController
       {
         _showMessage(nil)
         _cameraController.captureImage() { (image : UIImage) in
-          UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+          self._imagePreviewView.image = image
+          self._updateImagePreviewLayout(aspectRatio:image.size.width/image.size.height)
+          MCPhotoLibrary.save(image)
         }
       }
     }
@@ -430,6 +436,7 @@ private extension MCMainController
     //_removeAllConstraints()
 
     _layoutPreview()
+    _layoutImagePreview()
     _layoutDials()
     _layoutFocusSlider()
     _layoutShutterButton()
@@ -458,6 +465,29 @@ private extension MCMainController
     _addRightHandConstraint(NSLayoutConstraint(item: _previewView, attribute: .left, relatedBy: .equal, toItem: self.view, attribute: .left, multiplier: 1.0, constant: 0.0), "MCRightHandedPreview1")
 
     self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[preview]|", options: [], metrics: nil, views: ["preview" : _previewView]))
+  }
+
+  func _layoutImagePreview()
+  {
+    let imagePreviewViewInsetRightHanded = NSLayoutConstraint(item: _imagePreviewView, attribute: .left, relatedBy: .equal, toItem: _previewView, attribute: .left, multiplier: 1.0, constant: 0.0)
+    _addRightHandConstraint(imagePreviewViewInsetRightHanded, "MCRightHandedImagePreview")
+    _imagePreviewViewInsetRightHanded = imagePreviewViewInsetRightHanded
+    let imagePreviewViewInsetLeftHanded = NSLayoutConstraint(item: _imagePreviewView, attribute: .right, relatedBy: .equal, toItem: _previewView, attribute: .right, multiplier: 1.0, constant: 0.0)
+    _addLeftHandConstraint(imagePreviewViewInsetLeftHanded, "MCLeftHandedImagePreview")
+    _imagePreviewViewInsetLeftHanded = imagePreviewViewInsetLeftHanded
+
+    self.view.addConstraint(NSLayoutConstraint(item: _imagePreviewView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: 80.0))
+    self.view.addConstraint(NSLayoutConstraint(item: _imagePreviewView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1.0, constant: 80.0))
+    self.view.addConstraint(NSLayoutConstraint(item: _imagePreviewView, attribute: .bottom, relatedBy: .equal, toItem: _previewView, attribute: .bottom, multiplier: 1.0, constant: 0.0))
+  }
+
+  func _updateImagePreviewLayout(aspectRatio : CGFloat)
+  {
+    let width = aspectRatio * _previewView.frame.size.height
+    let inset = (_previewView.frame.size.width - width) / 2.0
+    _imagePreviewViewInsetRightHanded?.constant = inset
+    _imagePreviewViewInsetLeftHanded?.constant = inset
+    self.view.setNeedsLayout()
   }
 
   func _layoutDials()
@@ -615,9 +645,9 @@ private extension MCMainController
     self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[isoInd]-(4)-[isoLabel]-(4)-|", options:[], metrics:["width" : 200 ], views: [ "isoLabel" : _isoLabel, "isoInd" : _isoIndicator]))
   }
 
-  func _addRightHandConstraint(_ constraint : NSLayoutConstraint, _ identifier : String? = nil)
+  func _addRightHandConstraint(_ constraint : NSLayoutConstraint, _ identifier : String? = nil, view : UIView? = nil)
   {
-    self.view.addConstraint(constraint)
+    (view ?? self.view).addConstraint(constraint)
     _rightHandConstraints.append(constraint)
     if let label = identifier
     {
@@ -625,9 +655,9 @@ private extension MCMainController
     }
   }
 
-  func _addLeftHandConstraint(_ constraint : NSLayoutConstraint, _ identifier : String? = nil)
+  func _addLeftHandConstraint(_ constraint : NSLayoutConstraint, _ identifier : String? = nil, view : UIView? = nil)
   {
-    self.view.addConstraint(constraint)
+    (view ?? self.view).addConstraint(constraint)
     _leftHandConstraints.append(constraint)
     if let label = identifier
     {
@@ -703,6 +733,7 @@ private extension MCMainController
   #if arch(x86_64)
     _previewView.backgroundColor = UIColor.orange
   #endif
+    _buildImagePreviewView()
     _buildHistogramView()
     _buildGridView()
     _buildLevelIndicatorView()
@@ -715,6 +746,12 @@ private extension MCMainController
     _buildTopIndicators()
     _buildHelpOverlays()
     _buildMessageLabel()
+  }
+
+  func _buildImagePreviewView()
+  {
+    self.view.addSubview(_imagePreviewView)
+    _imagePreviewView.translatesAutoresizingMaskIntoConstraints = false
   }
 
   func _buildHistogramView()
