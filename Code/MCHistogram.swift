@@ -59,7 +59,7 @@ private func pageAlign<T>(_ buffer : UnsafeMutablePointer<T>, size : Int) -> Int
 
 private func _allocatePageAligned<T>(_ bytes : Int) -> UnsafeMutablePointer<T>
 {
-  var p : UnsafeMutableRawPointer? = UnsafeMutableRawPointer.allocate(bytes: bytes, alignedTo: kAlignment4K)
+  var p : UnsafeMutableRawPointer? = UnsafeMutableRawPointer.allocate(byteCount: bytes, alignment: kAlignment4K)
   posix_memalign(&p, kAlignment4K, bytes)
   return p!.bindMemory(to: T.self, capacity: bytes / MemoryLayout<T>.size)
 }
@@ -281,7 +281,7 @@ private extension MCHistogram
 
       let numPixelsProcessedPerThread = UInt32(inputDataSize / 4 / threadgroupsPerComputationGrid.width / threadgroupSize.width)
       guard let numPixelsBuffer = commandQueue.device.makeBuffer(length: 4, options:[]) else { return nil }
-      numPixelsBuffer.contents().initializeMemory(as: UInt32.self, to: numPixelsProcessedPerThread)
+      numPixelsBuffer.contents().initializeMemory(as: UInt32.self, repeating: numPixelsProcessedPerThread, count: 1)
 
       if let tileProcessingCE = commandBuffer.makeComputeCommandEncoder()
       {

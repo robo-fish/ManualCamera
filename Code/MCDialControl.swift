@@ -453,7 +453,7 @@ private class MCDialBackgroundLayer : CAMetalLayer
   {
     if let buffer = _gradientDirectionBuffer
     {
-      buffer.contents().initializeMemory(as: Bool.self, to: clockwiseFadingGradient)
+      buffer.contents().initializeMemory(as: Bool.self, repeating: clockwiseFadingGradient, count: 1)
     }
   }
 
