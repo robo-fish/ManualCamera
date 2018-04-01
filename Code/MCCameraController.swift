@@ -24,17 +24,15 @@ import AVFoundation
 protocol MCCameraControllerDelegate
 {
   func cameraController(_ controller : MCCameraController, didUpdateExposureTargetOffset offset : Float)
-  func cameraController(_ controller : MCCameraController, didUpdateExposureDuration duration : Double)
-  func cameraController(_ controller : MCCameraController, didUpdateISO iso : Float)
+  func cameraController(_ controller : MCCameraController, didUpdateExposureDuration duration : Double, normalizedValue : Float)
+  func cameraController(_ controller : MCCameraController, didUpdateISO iso : Float, normalizedValue : Float)
+  func cameraController(_ controller : MCCameraController, didUpdateFocusPosition : Float)
   func cameraControllerShouldPassVideoData(_ controller : MCCameraController) -> Bool
   func cameraController(_ controller : MCCameraController, hasNewVideoData pixelBuffer : CVPixelBuffer, completionHandler : @escaping ()->())
   var currentUserFocusPosition : Float {get}
   var lastStoredUserFocusPosition : Float {get}
-  func update(userFocusPosition : Float, forCameraController controller : MCCameraController)
   var lastStoredUserISO : Float {get}
-  func update(userISO newISO : Float, forCameraController controller : MCCameraController)
   var lastStoredUserShutter : Float {get}
-  func update(userShutter newShutter : Float, forCameraController : MCCameraController)
   func previewLayer(forCameraController controller : MCCameraController) -> AVCaptureVideoPreviewLayer
 }
 
@@ -88,6 +86,7 @@ class MCCameraController : NSObject
       // device.activeVideoMinFrameDuration = CMTimeMakeWithSeconds(1.0/MaxShutterSpeed, 1000000)
 
       _addParameterObservers(forDevice:device)
+      _notifyParameterValues()
     }
     catch
     {
@@ -97,15 +96,17 @@ class MCCameraController : NSObject
 
   private func _addParameterObservers(forDevice device : AVCaptureDevice)
   {
-    //_valueObservations.append( device.observe(\.lensPosition) { (observed, change) in /* do nothing */ }
     _valueObservations.append( device.observe(\.exposureTargetOffset) { (observed, change) in
       self.delegate?.cameraController(self, didUpdateExposureTargetOffset:observed.exposureTargetOffset)
     })
     _valueObservations.append( device.observe(\.exposureDuration) { (observed, change)->() in
-      self.delegate?.cameraController(self, didUpdateExposureDuration:CMTimeGetSeconds(observed.exposureDuration))
+      self.delegate?.cameraController(self, didUpdateExposureDuration:CMTimeGetSeconds(observed.exposureDuration), normalizedValue: self._normalizedLinearDuration(standardDuration: observed.exposureDuration))
     })
-    _valueObservations.append( device.observe(\AVCaptureDevice.ISO) { (observed, change)->() in
-      self.delegate?.cameraController(self, didUpdateISO:observed.iso)
+    _valueObservations.append( device.observe(\.ISO) { (observed, change)->() in
+      self.delegate?.cameraController(self, didUpdateISO:observed.iso, normalizedValue: self._normalizedLinearISO(standardISO: observed.iso))
+    })
+    _valueObservations.append( device.observe(\.lensPosition) { (observed, change)->() in
+      self.delegate?.cameraController(self, didUpdateFocusPosition: observed.lensPosition)
     })
   }
 
@@ -126,6 +127,16 @@ class MCCameraController : NSObject
         print("Camera session is \(isInterrupted ? "interrupted" : "resumed")")
       }
     })
+  }
+
+  private func _notifyParameterValues()
+  {
+    guard let device = _cameraDevice else { return }
+    guard let delegate = self.delegate else { return }
+    delegate.cameraController(self, didUpdateISO: device.iso, normalizedValue: _normalizedLinearISO(standardISO:device.iso))
+    delegate.cameraController(self, didUpdateExposureDuration: CMTimeGetSeconds(device.exposureDuration), normalizedValue: _normalizedLinearDuration(standardDuration: device.exposureDuration))
+    delegate.cameraController(self, didUpdateFocusPosition: device.lensPosition)
+    delegate.cameraController(self, didUpdateExposureTargetOffset: device.exposureTargetOffset)
   }
 
   func shutDownCamera()
@@ -192,16 +203,14 @@ class MCCameraController : NSObject
     _cameraPhotoOutput?.capturePhoto(with: AVCapturePhotoSettings(format:[AVVideoCodecKey:AVVideoCodecType.jpeg]), delegate: self)
   }
 
-  func handleFocusChangeIntent(newValue : Float, handler : @escaping (Float)->())
+  func requestFocusChange(newValue : Float)
   {
     guard let device = _cameraDevice else { return }
     do
     {
       try device.lockForConfiguration()
       defer { device.unlockForConfiguration() }
-      device.setFocusModeLocked(lensPosition:newValue) { (completionTimestamp : CMTime) in
-        handler(device.lensPosition)
-      }
+      device.setFocusModeLocked(lensPosition:newValue)
     }
     catch
     {
@@ -209,18 +218,15 @@ class MCCameraController : NSObject
     }
   }
 
-  func handleISOChangeIntent(newValue : Float, handler : @escaping (Float)->())
+  func requestISOChange(newValue : Float)
   {
     guard let device = _cameraDevice else { return }
     do
     {
       try device.lockForConfiguration()
       defer { device.unlockForConfiguration() }
-      let newISOValue = _standardISOForNormalizedISO(max(min(newValue, 1.0), 0.0))
-      device.setExposureModeCustom(duration:AVCaptureDevice.currentExposureDuration, iso:newISOValue) { (completionTimestamp : CMTime) in
-        let normalizedValue = self._normalizedISOForStandardISO(device.iso)
-        handler(normalizedValue)
-      }
+      let newISOValue = _standardISO(normalizedLinearISO: max(min(newValue, 1.0), 0.0))
+      device.setExposureModeCustom(duration:AVCaptureDevice.currentExposureDuration, iso:newISOValue)
     }
     catch
     {
@@ -228,17 +234,15 @@ class MCCameraController : NSObject
     }
   }
 
-  func handleShutterSpeedChangeIntent(newValue : Float, handler : @escaping (Float)->())
+  func requestShutterSpeedChange(newValue : Float)
   {
     guard let device = _cameraDevice else { return }
     do
     {
       try device.lockForConfiguration()
       defer { device.unlockForConfiguration() }
-      let newExposureDuration = _exposureDurationForDialValue(newValue)
-      device.setExposureModeCustom(duration:newExposureDuration, iso:AVCaptureDevice.currentISO) { (completionTimestamp : CMTime) in
-        handler(self._dialValueForExposureDuration(device.exposureDuration))
-      }
+      let newExposureDuration = _standardDuration(normalizedLinearDuration: newValue)
+      device.setExposureModeCustom(duration:newExposureDuration, iso:AVCaptureDevice.currentISO)
     }
     catch
     {
@@ -316,7 +320,7 @@ class MCCameraController : NSObject
     return nil
   }
 
-  private func _exposureDurationForDialValue(_ dialValue : Float) -> CMTime
+  private func _standardDuration(normalizedLinearDuration dialValue : Float) -> CMTime
   {
     guard let format = _cameraDevice?.activeFormat else { return kCMTimeZero }
     let maxSpeed = log10(min(MaxShutterSpeed, 1.0/CMTimeGetSeconds(format.minExposureDuration)))
@@ -326,7 +330,7 @@ class MCCameraController : NSObject
     return (exposure == 0.0) /* because speed == inf */? format.maxExposureDuration : CMTimeMakeWithSeconds(exposure, 1000000)
   }
 
-  private func _dialValueForExposureDuration(_ duration : CMTime) -> Float
+  private func _normalizedLinearDuration(standardDuration duration : CMTime) -> Float
   {
     guard let format = _cameraDevice?.activeFormat else { return 0 }
     let maxSpeed = log10(min(MaxShutterSpeed, 1.0/CMTimeGetSeconds(format.minExposureDuration)))
@@ -335,18 +339,18 @@ class MCCameraController : NSObject
     return max(0.0, min(1.0, Float((speed - minSpeed)/(maxSpeed - minSpeed))))
   }
 
-  private func _standardISOForNormalizedISO(_ dialValue : Float) -> Float
+  private func _standardISO(normalizedLinearISO dialValue : Float) -> Float
   {
     guard let format = _cameraDevice?.activeFormat else { return 200.0 }
     return format.minISO + dialValue * (format.maxISO - format.minISO)
   }
 
-  private func _normalizedISOForStandardISO(_ ISO : Float) -> Float
+  private func _normalizedLinearISO(standardISO iso : Float) -> Float
   {
     guard let format = _cameraDevice?.activeFormat else { return 0.0 }
-    if (format.minISO > 0.0) && (format.maxISO > format.minISO) && (ISO > format.minISO)
+    if (format.minISO > 0.0) && (format.maxISO > format.minISO) && (iso > format.minISO)
     {
-      return (ISO - format.minISO) / (format.maxISO - format.minISO)
+      return (iso - format.minISO) / (format.maxISO - format.minISO)
     }
     return 0.0
   }
@@ -362,19 +366,19 @@ class MCCameraController : NSObject
     {
       try device.lockForConfiguration()
       defer { device.unlockForConfiguration() }
-      let isoValue = _standardISOForNormalizedISO(restoredISODialValue)
-      let exposureDuration = _exposureDurationForDialValue(restoredShutterDialValue)
+      let isoValue = _standardISO(normalizedLinearISO: restoredISODialValue)
+      let exposureDuration = _standardDuration(normalizedLinearDuration: restoredShutterDialValue)
       device.setExposureModeCustom(duration:exposureDuration, iso:isoValue) { (syncTime : CMTime) in
-        let newISODialValue = self._normalizedISOForStandardISO(device.iso)
-        dele.update(userISO:newISODialValue, forCameraController:self)
-        let newShutterDialValue = self._dialValueForExposureDuration(device.exposureDuration)
-        dele.update(userShutter:newShutterDialValue, forCameraController:self)
+        let normalizedISO = self._normalizedLinearISO(standardISO: device.iso)
+        dele.cameraController(self, didUpdateISO:device.iso, normalizedValue: normalizedISO)
+        let normalizedDuration = self._normalizedLinearDuration(standardDuration: device.exposureDuration)
+        dele.cameraController(self, didUpdateExposureDuration:CMTimeGetSeconds(device.exposureDuration), normalizedValue:normalizedDuration)
         do
         {
           try device.lockForConfiguration()
           defer { device.unlockForConfiguration() }
           device.setFocusModeLocked(lensPosition:restoredFocalDistanceSliderValue) { (syncTime : CMTime) in
-            dele.update(userFocusPosition:device.lensPosition, forCameraController:self)
+            dele.cameraController(self, didUpdateFocusPosition: device.lensPosition)
           }
         }
         catch

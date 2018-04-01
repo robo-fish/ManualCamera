@@ -22,9 +22,9 @@ import UIKit
 
 protocol MCSliderControlDelegate
 {
-  func beginValueChangeForSliderControl(_ control : MCSliderControl)
-  func endValueChangeForSliderControl(_ control : MCSliderControl)
-  func updateValueForSliderControl(_ control : MCSliderControl)
+  func beginChange(value: Float, for control : MCSliderControl)
+  func endChange(for control : MCSliderControl)
+  func update(value: Float, for control : MCSliderControl)
 }
 
 enum MCSliderControlOrientation
@@ -60,7 +60,7 @@ class MCSliderControl : UIView
     }
     set
     {
-      _sliderValue = (newValue > 1.0) ? 1.0 : ((newValue < 0.0) ? 0.0 : newValue)
+      _sliderValue = max(0.0, min(1.0, newValue))
       setNeedsDisplay()
     }
   }
@@ -133,8 +133,7 @@ class MCSliderControl : UIView
   {
     if let value = _sliderValueForTouches(touches)
     {
-      self.value = value
-      delegate?.beginValueChangeForSliderControl(self)
+      delegate?.beginChange(value: value, for:self)
     }
   }
 
@@ -142,8 +141,7 @@ class MCSliderControl : UIView
   {
     if let value = _sliderValueForTouches(touches)
     {
-      self.value = value
-      delegate?.updateValueForSliderControl(self)
+      delegate?.update(value: value, for:self)
     }
   }
 
@@ -154,7 +152,7 @@ class MCSliderControl : UIView
 
   override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?)
   {
-    delegate?.endValueChangeForSliderControl(self)
+    delegate?.endChange(for: self)
   }
 
   //MARK: Private
@@ -172,15 +170,20 @@ class MCSliderControl : UIView
           case .diagonalFallingLeftToRight: fallthrough
           case .diagonalRisingLeftToRight: fallthrough
           case .verticalBottomToTop:
-            let tickSlotHeight = controlSize.height / CGFloat(tickCount)
-            let position = touch.location(in: self).y - tickSlotHeight/2.0
-            let height = controlSize.height - tickSlotHeight
-            result = Float((height - position)/height)
+            let minPos = _headHeight/2.0
+            let maxPos = controlSize.height - _headHeight/2.0
+            let position = max(minPos, min(touch.location(in: self).y, maxPos))
+            let range = controlSize.height - _headHeight
+            let r = 1.0 - Float((position - minPos)/range)
+            assert(r >= 0.0 && r <= 1.0)
+            result = r
           case .horizontalLeftToRight:
             let tickSlotWidth = controlSize.width / CGFloat(tickCount)
             let position = touch.location(in: self).x - tickSlotWidth/2.0
             let width = controlSize.width - tickSlotWidth
-            result = Float((width - position)/width)
+            let r = Float((width - position)/width)
+            assert(r >= 0.0 && r <= 1.0)
+            result = r
         }
       }
     }
@@ -238,7 +241,7 @@ class MCSliderControl : UIView
   private func _drawTickMarkedSliderInRect(_ rect : CGRect, withContext context : CGContext)
   {
     let size = self.bounds.size
-    let tickSlotHeight = size.height / CGFloat(tickCount)
+    let tickSlotHeight = (size.height - _headHeight) / CGFloat(tickCount)
     let ticksInsetX = 0.2 * size.width
 
     // Drawing the tick marks
@@ -247,14 +250,14 @@ class MCSliderControl : UIView
     path.lineCapStyle = .round
     for i in 0..<tickCount
     {
-      let verticalPos = (CGFloat(i) + 0.5) * tickSlotHeight
+      let verticalPos = (CGFloat(i) + 0.5) * tickSlotHeight + _headHeight/2.0
       path.move(to: CGPoint(x: ticksInsetX, y: verticalPos))
       path.addLine(to: CGPoint(x: size.width - ticksInsetX, y: verticalPos))
     }
     path.stroke()
 
     // Drawing the slider head
-    let headVerticalPos = ((size.height - tickSlotHeight) * (1.0 - CGFloat(value))) + tickSlotHeight/2.0 - _headHeight/2.0
+    let headVerticalPos = (size.height - _headHeight) * (1.0 - CGFloat(_sliderValue))
     UIBezierPath(roundedRect: CGRect(x: 0.0, y: headVerticalPos, width: size.width, height: _headHeight), cornerRadius:_headHeight/2.0).fill()
   }
 

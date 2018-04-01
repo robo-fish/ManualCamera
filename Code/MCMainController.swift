@@ -316,7 +316,7 @@ extension MCMainController : MCCameraControllerDelegate
     _exposureOffsetView.offsetValue = offset
   }
 
-  func cameraController(_ controller : MCCameraController, didUpdateExposureDuration seconds : Double)
+  func cameraController(_ controller : MCCameraController, didUpdateExposureDuration seconds : Double, normalizedValue : Float)
   {
     if seconds > 1.0
     {
@@ -327,11 +327,15 @@ extension MCMainController : MCCameraControllerDelegate
       let inverse = 1.0/seconds
       _shutterSpeedIndicator.text = String(format:"%.0f", inverse)
     }
+    _speedDial.dialValue = normalizedValue
+    UserDefaults.standard.set(normalizedValue, forKey:MCPreferenceKey.Shutter.rawValue)
   }
 
-  func cameraController(_ controller : MCCameraController, didUpdateISO iso : Float)
+  func cameraController(_ controller : MCCameraController, didUpdateISO iso : Float, normalizedValue : Float)
   {
     _isoIndicator.text = String(format:"%.0f", iso)
+    _isoDial.dialValue = normalizedValue
+    UserDefaults.standard.set(normalizedValue, forKey:MCPreferenceKey.ISO.rawValue)
   }
 
   func cameraControllerShouldPassVideoData(_ controller : MCCameraController) -> Bool
@@ -360,6 +364,11 @@ extension MCMainController : MCCameraControllerDelegate
 #endif
   }
 
+  func cameraController(_ controller : MCCameraController, didUpdateFocusPosition newFocusPosition: Float)
+  {
+    _focusSlider.value = newFocusPosition
+  }
+
   var currentUserFocusPosition : Float
   {
     return _focusSlider.value
@@ -370,24 +379,9 @@ extension MCMainController : MCCameraControllerDelegate
     return max(0.0, min(1.0, UserDefaults.standard.float(forKey: MCPreferenceKey.ISO.rawValue)))
   }
 
-  func update(userFocusPosition newFocusPosition: Float, forCameraController : MCCameraController)
-  {
-    _focusSlider.value = newFocusPosition
-  }
-
-  func update(userISO ISOValue : Float, forCameraController : MCCameraController)
-  {
-    _isoDial.dialValue = ISOValue
-  }
-
   var lastStoredUserISO : Float
   {
     return max(0.0, min(1.0, UserDefaults.standard.float(forKey: MCPreferenceKey.FocalDistance.rawValue)))
-  }
-
-  func update(userShutter newShutter: Float, forCameraController: MCCameraController)
-  {
-    _speedDial.dialValue = newShutter
   }
 
   var lastStoredUserShutter : Float
@@ -406,12 +400,12 @@ extension MCMainController : MCCameraControllerDelegate
 extension MCMainController : MCSliderControlDelegate
 {
 
-  func beginValueChangeForSliderControl(_ slider : MCSliderControl)
+  func beginChange(value: Float, for slider : MCSliderControl)
   {
-    self.updateValueForSliderControl(slider)
+    self.update(value: value, for: slider)
   }
 
-  func endValueChangeForSliderControl(_ slider : MCSliderControl)
+  func endChange(for slider : MCSliderControl)
   {
     if slider === _focusSlider
     {
@@ -419,14 +413,9 @@ extension MCMainController : MCSliderControlDelegate
     }
   }
 
-  func updateValueForSliderControl(_ slider : MCSliderControl)
+  func update(value : Float, for slider : MCSliderControl)
   {
-    if slider === _focusSlider
-    {
-      _cameraController.handleFocusChangeIntent(newValue:_focusSlider.value) {
-        self._focusSlider.value = $0
-      }
-    }
+    _cameraController.requestFocusChange(newValue:value)
   }
 
 }
@@ -791,14 +780,8 @@ private extension MCMainController
   func _buildDials()
   {
     self.view.addSubview(_speedDial)
-    _speedDial.dialAction = { (newValue : Float, update : Bool) in self._cameraController.handleShutterSpeedChangeIntent(newValue:newValue, handler:{
-        (newDialValue) in
-        if update
-        {
-          self._speedDial.dialValue = newDialValue
-          UserDefaults.standard.set(newDialValue, forKey:MCPreferenceKey.Shutter.rawValue)
-        }
-      })
+    _speedDial.dialAction = { (newValue : Float, update : Bool) in
+      self._cameraController.requestShutterSpeedChange(newValue:newValue)
     }
     _speedDial.tickCount = 36
     _speedDial.tickColor = MCControlColor;
@@ -806,13 +789,8 @@ private extension MCMainController
     _speedDial.translatesAutoresizingMaskIntoConstraints = false
 
     self.view.addSubview(_isoDial)
-    _isoDial.dialAction = { (newValue : Float, update : Bool) in self._cameraController.handleISOChangeIntent(newValue:newValue, handler:{ (normalizedISO) in
-        if update
-        {
-          self._isoDial.dialValue = normalizedISO
-          UserDefaults.standard.set(normalizedISO, forKey:MCPreferenceKey.ISO.rawValue)
-        }
-      })
+    _isoDial.dialAction = { (newValue : Float, update : Bool) in
+      self._cameraController.requestISOChange(newValue:newValue)
     }
     _isoDial.tickCount = 36
     _isoDial.tickColor = MCControlColor
