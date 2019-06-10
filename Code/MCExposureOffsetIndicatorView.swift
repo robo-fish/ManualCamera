@@ -48,7 +48,7 @@ class MCExposureOffsetIndicatorView : UIView
     path.stroke()
 
     var strokeColor : CGColor = MCIndicatorColor.cgColor
-    let max = (offsetValue > 0) ? fabs(maxOffset) : fabs(minOffset)
+    let max = (offsetValue > 0) ? abs(maxOffset) : abs(minOffset)
     var indicatorLineEnd = CGFloat(offsetValue/max)
     if (offsetValue > maxOffset) || (offsetValue < minOffset)
     {

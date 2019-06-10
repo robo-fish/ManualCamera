@@ -54,13 +54,13 @@ class MCHelpOverlayManager : NSObject
   private var _helpTags = [MCHelpTag]()
   private var _labels = [UILabel]()
   private var _didLayOutLabels : Bool = false
-  private var _textAttributes = [NSAttributedStringKey:Any]()
+  private var _textAttributes = [NSAttributedString.Key:Any]()
 
   init(rootView: UIView)
   {
     _rootView = rootView
     _helpOverlayView = UIView(frame:rootView.bounds)
-    _textAttributes[NSAttributedStringKey.font] = UIFont.systemFont(ofSize: 14.0)
+    _textAttributes[NSAttributedString.Key.font] = UIFont.systemFont(ofSize: 14.0)
   }
 
   func addHelpTag(_ tag : String, forView taggedView : UIView?, anchor : MCHelpLabelAnchor, offset : Float = 10.0)
@@ -155,7 +155,7 @@ class MCHelpOverlayManager : NSObject
     result.layer.backgroundColor = UIColor(red:0.8, green:0.8, blue:0.2, alpha:0.8).cgColor
     result.layer.cornerRadius = margin
     result.numberOfLines = 0
-    result.font = _textAttributes[NSAttributedStringKey.font] as! UIFont
+    result.font = _textAttributes[NSAttributedString.Key.font] as? UIFont
     result.text = tag.text
     result.textAlignment = .center
     result.translatesAutoresizingMaskIntoConstraints = false

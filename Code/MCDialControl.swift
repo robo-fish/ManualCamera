@@ -231,7 +231,7 @@ let MCPI1_5 = 1.5 * MCPI
   }
 }
 
-//MARK:-
+//MARK: - MCDialShapeLayer
 
 private class MCDialShapeLayer : CAShapeLayer
 {
@@ -296,7 +296,7 @@ private class MCDialShapeLayer : CAShapeLayer
   }
 }
 
-//MARK:-
+//MARK: - MCDialBackgroundLayer
 
 #if arch(arm64)
 

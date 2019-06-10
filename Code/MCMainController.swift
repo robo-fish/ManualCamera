@@ -108,8 +108,8 @@ class MCMainController : UIViewController
     ])
 
     let notifCenter = NotificationCenter.default
-    notifCenter.addObserver(self, selector:#selector(MCMainController.handleAppBecameActive(_:)), name:NSNotification.Name.UIApplicationDidBecomeActive, object:nil)
-    notifCenter.addObserver(self, selector:#selector(MCMainController.handleAppWillBecomeInactive(_:)), name:NSNotification.Name.UIApplicationWillResignActive, object:nil)
+    notifCenter.addObserver(self, selector:#selector(MCMainController.handleAppBecameActive(_:)), name:UIApplication.didBecomeActiveNotification, object:nil)
+    notifCenter.addObserver(self, selector:#selector(MCMainController.handleAppWillBecomeInactive(_:)), name:UIApplication.willResignActiveNotification, object:nil)
     _layoutStyle = UserDefaults.standard.bool(forKey: MCPreferenceKey.LeftHandedLayout.rawValue) ? .left : .right
   }
 
@@ -172,7 +172,7 @@ class MCMainController : UIViewController
 
   @objc func openSettings(_ sender : AnyObject)
   {
-    if let url = URL(string:UIApplicationOpenSettingsURLString)
+    if let url = URL(string:UIApplication.openSettingsURLString)
     {
       UIApplication.shared.open(url)
     }
@@ -216,7 +216,7 @@ class MCMainController : UIViewController
 
 }
 
-//MARK:- Private -
+//MARK: - Private
 
 private extension MCMainController
 {
@@ -255,7 +255,8 @@ private extension MCMainController
         _showMessage(nil)
       }
     case .denied: fallthrough
-    case .restricted:
+    case .restricted: fallthrough
+    @unknown default:
       _handleAccessDeniedToCamera()
     }
   }
@@ -313,7 +314,7 @@ private extension MCMainController
   }
 }
 
-//MARK:- MCCameraControllerDelegate -
+//MARK: - MCCameraControllerDelegate
 
 extension MCMainController : MCCameraControllerDelegate
 {
@@ -401,7 +402,7 @@ extension MCMainController : MCCameraControllerDelegate
   }
 }
 
-// MARK:- MCSliderControlDelegate -
+// MARK: - MCSliderControlDelegate
 
 extension MCMainController : MCSliderControlDelegate
 {
@@ -426,7 +427,7 @@ extension MCMainController : MCSliderControlDelegate
 
 }
 
-//MARK:- GUI Layout -
+//MARK: - GUI Layout
 
 private extension MCMainController
 {
@@ -722,7 +723,7 @@ private extension MCMainController
 
 }
 
-//MARK:- GUI view creation -
+//MARK: - GUI view creation
 
 private extension MCMainController
 {
@@ -856,15 +857,15 @@ private extension MCMainController
     let font = UIFont.systemFont(ofSize: _screenVariant(w568: 20.0, w667: 22.0, w736: 24.0, w812:24.0), weight: UIFont.Weight.regular)
 
     self.view.addSubview(_histogramButton)
-    _histogramButton.setTitle("HIST", for: UIControlState())
-    _histogramButton.setTitleColor(MCControlColor, for:UIControlState())
+    _histogramButton.setTitle("HIST", for: UIControl.State.normal)
+    _histogramButton.setTitleColor(MCControlColor, for:UIControl.State.normal)
     _histogramButton.titleLabel?.font = font
     _histogramButton.addTarget(self, action: #selector(MCMainController.toggleHistogram(_:)), for: .touchUpInside)
     _histogramButton.translatesAutoresizingMaskIntoConstraints = false
 
     self.view.addSubview(_gridButton)
-    _gridButton.setTitle("GRID", for: UIControlState())
-    _gridButton.setTitleColor(MCControlColor, for:UIControlState())
+    _gridButton.setTitle("GRID", for: UIControl.State())
+    _gridButton.setTitleColor(MCControlColor, for:UIControl.State())
     _gridButton.titleLabel?.font = font
     _gridButton.addTarget(self, action: #selector(MCMainController.toggleGrid(_:)), for: .touchUpInside)
     _gridButton.translatesAutoresizingMaskIntoConstraints = false

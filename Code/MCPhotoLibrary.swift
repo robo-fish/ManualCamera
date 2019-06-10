@@ -19,6 +19,7 @@
 *
 ****************************************************************************/
 import Photos
+import UIKit
 
 class MCPhotoLibrary
 {

@@ -104,7 +104,7 @@ class MCCameraController : NSObject
     _valueObservations.append( device.observe(\.exposureDuration) { (observed, change)->() in
       self.delegate?.cameraController(self, didUpdateExposureDuration:CMTimeGetSeconds(observed.exposureDuration), normalizedValue: self._normalizedLinearDuration(standardDuration: observed.exposureDuration))
     })
-    _valueObservations.append( device.observe(\.ISO) { (observed, change)->() in
+    _valueObservations.append( device.observe(\.iso) { (observed, change)->() in
       self.delegate?.cameraController(self, didUpdateISO:observed.iso, normalizedValue: self._normalizedLinearISO(standardISO: observed.iso))
     })
     _valueObservations.append( device.observe(\.lensPosition) { (observed, change)->() in
@@ -114,7 +114,7 @@ class MCCameraController : NSObject
 
   private func _addParameterObservers(forSession session : AVCaptureSession)
   {
-    _valueObservations.append( session.observe(\.running) { (observed, change) in
+    _valueObservations.append( session.observe(\.isRunning) { (observed, change) in
       if let isRunning = change.newValue
       {
         if isRunning
@@ -123,7 +123,7 @@ class MCCameraController : NSObject
         }
       }
     })
-    _valueObservations.append( session.observe(\.interrupted) { (observed, change) in
+    _valueObservations.append( session.observe(\.isInterrupted) { (observed, change) in
       if let isInterrupted = change.newValue
       {
         print("Camera session is \(isInterrupted ? "interrupted" : "resumed")")
@@ -335,12 +335,12 @@ class MCCameraController : NSObject
 
   private func _standardDuration(normalizedLinearDuration dialValue : Float) -> CMTime
   {
-    guard let format = _cameraDevice?.activeFormat else { return kCMTimeZero }
+    guard let format = _cameraDevice?.activeFormat else { return CMTime.zero }
     let maxSpeed = log10(min(MaxShutterSpeed, 1.0/CMTimeGetSeconds(format.minExposureDuration)))
     let minSpeed = log10(max(MinShutterSpeed, 1.0/CMTimeGetSeconds(format.maxExposureDuration)))
     let speed = minSpeed + max(0.0,(min(1.0,Double(dialValue)))) * (maxSpeed - minSpeed)
     let exposure = pow(10.0,-speed)
-    return (exposure == 0.0) /* because speed == inf */? format.maxExposureDuration : CMTimeMakeWithSeconds(exposure, 1000000)
+    return (exposure == 0.0) /* because speed == inf */? format.maxExposureDuration : CMTimeMakeWithSeconds(exposure, preferredTimescale: 1000000)
   }
 
   private func _normalizedLinearDuration(standardDuration duration : CMTime) -> Float

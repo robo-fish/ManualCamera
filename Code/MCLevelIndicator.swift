@@ -62,7 +62,7 @@ class MCLevelIndicator : NSObject
         layer.frame = layerFrame
         layer.cornerRadius = layerFrame.size.height/2.0
         layer.backgroundColor = MCBackgroundColor.cgColor
-        layer.lineCap = kCALineCapRound
+        layer.lineCap = CAShapeLayerLineCap.round
         layer.lineWidth = layerFrame.size.height - 2.0
         layer.fillColor = MCIndicatorColor.cgColor
         layer.strokeColor = MCIndicatorColor.cgColor
